@@ -24,7 +24,7 @@ router.get('/', async (req, res, next) => {
     
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 10));
-    const search = (req.query.search || '').toLowerCase();
+    const search = (req.query.q || '').toLowerCase();
     
     let results = data;
     if (search) {
@@ -36,14 +36,17 @@ router.get('/', async (req, res, next) => {
     const start = (page - 1) * limit;
     const end = start + limit;
     const paginated = results.slice(start, end);
-    
-    res.json({
-      items: paginated,
-      total: results.length,
-      page,
-      limit,
-      hasMore: end < results.length
-    });
+
+    // Simulate delay
+    setTimeout(() => {
+      res.json({
+        items: paginated,
+        total: results.length,
+        page,
+        limit,
+        hasMore: end < results.length
+      });
+    }, 1500);
   } catch (err) {
     next(err);
   }
