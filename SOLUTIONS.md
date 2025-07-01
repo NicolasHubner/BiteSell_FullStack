@@ -40,6 +40,6 @@ UI/UX Polish(Check)
 
 Comments:
 
--Not using type script was a bit of a challenge, because helps a lot to avoid some mistakes.
--I handle this little project with a bit of a rush, so some things could be better.
--In all the things that I work I try to make the best possible code, but I know that I can always improve.
+*-Not using type script was a bit of a challenge, because helps a lot to avoid some mistakes.*
+*-I handle this little project with a bit of a rush, so some things could be better.*
+*-In all the things that I work I try to make the best possible code, but I know that I can always improve.*
