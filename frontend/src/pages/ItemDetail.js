@@ -7,10 +7,14 @@ function ItemDetail() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/items/' + id)
+    //Had to add the http://localhost:3001/api/items/ to make it work
+    fetch('http://localhost:3001/api/items/' + id)
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then(setItem)
-      .catch(() => navigate('/'));
+      .catch((error) => {
+        console.error('Error fetching item:', error);
+        navigate('/');
+      });
   }, [id, navigate]);
 
   if (!item) return <p>Loading...</p>;
