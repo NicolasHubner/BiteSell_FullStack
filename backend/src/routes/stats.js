@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const router = express.Router();
-const { updateCache, DATA_PATH } = require('../utils/stats');
+const { updateCache, DATA_PATH, statsCache, cacheTimestamp, CACHE_TTL_MS } = require('../utils/stats');
 
 
 // Watch for file changes

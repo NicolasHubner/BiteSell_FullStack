@@ -13,34 +13,32 @@ function calculateStats(items) {
   };
 }
 
-const updateCache = (callback) => {
-  fs.readFile(DATA_PATH, (err, raw) => {
-    if (err) {
-      return callback({
-        success: false,
-        error: err,
-        data: null
-      });
-    }
+const updateCache = async (callback) => {
+  try {
+    const raw = await fs.promises.readFile(DATA_PATH, 'utf8');
+    const items = JSON.parse(raw);
+    statsCache = calculateStats(items);
+    cacheTimestamp = Date.now();
     
-    try {
-      const items = JSON.parse(raw);
-      statsCache = calculateStats(items);
-      cacheTimestamp = Date.now();
-      
-      callback({
-        success: true,
-        error: null,
-        data: statsCache
-      });
-    } catch (parseErr) {
-      callback({
-        success: false,
-        error: parseErr,
-        data: null
-      });
-    }
-  });
+    callback({
+      success: true,
+      error: null,
+      data: statsCache
+    });
+  } catch (err) {
+    callback({
+      success: false,
+      error: err,
+      data: null
+    });
+  }
 };
 
-module.exports = { calculateStats, updateCache, DATA_PATH };
+module.exports = { 
+  calculateStats, 
+  updateCache, 
+  statsCache, 
+  cacheTimestamp, 
+  CACHE_TTL_MS,
+  DATA_PATH 
+};
