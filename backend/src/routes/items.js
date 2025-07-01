@@ -2,7 +2,9 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
+const { validateBodyPost } = require('../middleware/validation-post');
 const DATA_PATH = path.join(__dirname, '../../../data/items.json');
+
 
 // Utility to read data using async/await
 async function readData() {
@@ -64,10 +66,10 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // POST /api/items
-router.post('/', async (req, res, next) => {
+router.post('/', validateBodyPost, async (req, res, next) => {
   try {
-    // TODO: Validate payload (intentional omission)
     const item = req.body;
+
     const data = await readData();
     item.id = Date.now();
     data.push(item);
