@@ -1,22 +1,38 @@
 const express = require('express');
 const fs = require('fs');
-const path = require('path');
 const router = express.Router();
-const DATA_PATH = path.join(__dirname, '../../data/items.json');
+const { updateCache, DATA_PATH } = require('../utils/stats');
+
+
+// Watch for file changes
+fs.watchFile(DATA_PATH, { interval: 1000 }, () => {
+  console.log('Data file changed, invalidating cache...');
+  updateCache(({ success, error }) => {
+    if (!success) console.error('Failed to update stats cache:', error);
+  });
+});
 
 // GET /api/stats
 router.get('/', (req, res, next) => {
-  fs.readFile(DATA_PATH, (err, raw) => {
-    if (err) return next(err);
-
-    const items = JSON.parse(raw);
-    // Intentional heavy CPU calculation
-    const stats = {
-      total: items.length,
-      averagePrice: items.reduce((acc, cur) => acc + cur.price, 0) / items.length
-    };
-
-    res.json(stats);
+  const now = Date.now();
+  
+  if (statsCache && (now - cacheTimestamp) < CACHE_TTL_MS) {
+    return res.json({
+      ...statsCache,
+      _cached: true,
+      _cachedUntil: new Date(cacheTimestamp + CACHE_TTL_MS).toISOString()
+    });
+  }
+  
+  // For first time and if isn't fresh, so recalculates and update the cache
+  updateCache(({ success, error, data: freshStats }) => {
+    if (!success) return next(error);
+    
+    res.json({
+      ...freshStats,
+      _cached: false,
+      _cachedUntil: new Date(cacheTimestamp + CACHE_TTL_MS).toISOString()
+    });
   });
 });
 
